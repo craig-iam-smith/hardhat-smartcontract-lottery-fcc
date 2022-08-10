@@ -4,7 +4,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
 
 !developmentChains.includes(network.name)
     ? describe.skip
-    : describe("Raffle Unit Tests", function () {
+    : describe("Raffle Unit Tests", async function () {
           let raffle, raffleContract, vrfCoordinatorV2Mock, raffleEntranceFee, interval, player // , deployer
 
           beforeEach(async () => {
@@ -26,6 +26,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   const raffleState = (await raffle.getRaffleState()).toString()
                   // Comparisons for Raffle initialization:
                   assert.equal(raffleState, "0")
+                  // interval gotten in beforeEach
                   assert.equal(
                       interval.toString(),
                       networkConfig[network.config.chainId]["keepersUpdateInterval"]
@@ -80,7 +81,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
               it("returns false if enough time hasn't passed", async () => {
                   await raffle.enterRaffle({ value: raffleEntranceFee })
-                  await network.provider.send("evm_increaseTime", [interval.toNumber() - 1])
+                  await network.provider.send("evm_increaseTime", [interval.toNumber() - 2])
                   await network.provider.request({ method: "evm_mine", params: [] })
                   const { upkeepNeeded } = await raffle.callStatic.checkUpkeep("0x") // upkeepNeeded = (timePassed && isOpen && hasBalance && hasPlayers)
                   assert(!upkeepNeeded)
@@ -189,3 +190,4 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
           })
       })
+ 

@@ -115,7 +115,7 @@ contract Raffle is VRFConsumerBaseV2, KeeperCompatibleInterface {
         bytes calldata /* performData */
     ) external override {
         (bool upkeepNeeded, ) = checkUpkeep("");
-        // require(upkeepNeeded, "Upkeep not needed");
+        // require(upkeepNeeded, "Upkeep not needed");emit
         if (!upkeepNeeded) {
             revert Raffle__UpkeepNotNeeded(
                 address(this).balance,
